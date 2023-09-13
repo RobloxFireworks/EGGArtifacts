@@ -72,7 +72,7 @@ local function NFUQ_fake_script() -- TextButton.CLICK
 		for _, c in pairs(artifacts:GetChildren()) do
 			if c.Name == "Crystal Pack" then
 				-- Teleport the player to the crystal
-				local teleportPosition = c.Position
+				local teleportPosition = c.Crystal.Position
 				player.Character:MoveTo(teleportPosition)
 			end
 		end
