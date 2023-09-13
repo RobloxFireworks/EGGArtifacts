@@ -151,7 +151,6 @@ local function NFUQ_fake_script() -- TextButton.CLICK
 	            end
 	        end
 	    end
-end)
 
 end)
 	
