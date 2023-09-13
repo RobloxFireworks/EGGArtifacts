@@ -65,18 +65,22 @@ local function NFUQ_fake_script() -- TextButton.CLICK
 	local script = Instance.new('LocalScript', TextButton)
 
 	local player = game.Players.LocalPlayer
-	
-	script.Parent.MouseButton1Click:Connect(function()
-		local artifacts = game.Workspace.Map.Folders.Crystals
-	
-		for _, c in pairs(artifacts:GetChildren()) do
-			if c.Name == "Crystal Pack" then
-				-- Teleport the player to the crystal
-				local teleportPosition = c.Crystal.Position
-				player.Character:MoveTo(teleportPosition)
-			end
-		end
-	end)
+
+script.Parent.MouseButton1Click:Connect(function()
+    local artifacts = game.Workspace:FindPartsInRegion3(game.Workspace.MouseIgnore.CFrame, Vector3.new(50, 50, 50), nil)
+
+    for _, part in pairs(artifacts) do
+        if part.Parent and part.Parent:IsA("Model") and string.sub(part.Parent.Name, 1, 8) == "Artifact" then
+            local plasticPart = part.Parent:FindFirstChild("plastic")
+            
+            if plasticPart then
+                -- Teleport the player to the plastic part inside the artifact
+                local teleportPosition = plasticPart.Position
+                player.Character:MoveTo(teleportPosition)
+            end
+        end
+    end
+end)
 	
 end
 coroutine.wrap(NFUQ_fake_script)()
