@@ -9,8 +9,8 @@ local UIPadding = Instance.new("UIPadding")
 
 Main.Name = "Main"
 Main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-Main.ZIndexBehavior = Enum.ZIndexBehavior.Global
-Main.IgnoreGuiInset = true
+Main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+Main.DisplayOrder = 999999999
 
 Frame.Parent = Main
 Frame.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -19,7 +19,7 @@ Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 Frame.BorderSizePixel = 0
 Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
 Frame.Size = UDim2.new(0.200000003, 0, 0.150000006, 0)
-Frame.ZIndex = 99999
+Frame.ZIndex = 999999999
 
 TextLabel.Parent = Frame
 TextLabel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -61,7 +61,26 @@ UIPadding.PaddingTop = UDim.new(0, 5)
 
 -- Scripts:
 
-local function KEYDJ_fake_script() -- Frame.Smooth GUI Dragging 
+local function NFUQ_fake_script() -- TextButton.CLICK 
+	local script = Instance.new('LocalScript', TextButton)
+
+	local player = game.Players.LocalPlayer
+	
+	script.Parent.MouseButton1Click:Connect(function()
+		local artifacts = game.Workspace.Map.Folders.Crystals
+	
+		for _, c in pairs(artifacts:GetChildren()) do
+			if c.Name == "Crystal Pack" then
+				-- Teleport the player to the crystal
+				local teleportPosition = c.Position
+				player.Character:MoveTo(teleportPosition)
+			end
+		end
+	end)
+	
+end
+coroutine.wrap(NFUQ_fake_script)()
+local function JMOH_fake_script() -- Frame.Smooth GUI Dragging 
 	local script = Instance.new('LocalScript', Frame)
 
 	local UserInputService = game:GetService("UserInputService")
@@ -118,4 +137,4 @@ local function KEYDJ_fake_script() -- Frame.Smooth GUI Dragging
 	
 	runService.Heartbeat:Connect(Update)
 end
-coroutine.wrap(KEYDJ_fake_script)()
+coroutine.wrap(JMOH_fake_script)()
