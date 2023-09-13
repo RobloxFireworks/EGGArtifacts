@@ -50,6 +50,72 @@ TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextButton.TextScaled = true
 TextButton.TextSize = 14.000
 TextButton.TextWrapped = true
+local Button = TextButton
+Button.AutoButtonColor = false
+
+--Values
+local Logs = false
+local ScaleTextSize = 7
+local TweenTime = 0.24
+local Style = Enum.EasingStyle.Quad
+local EnterDarkDegree = -10        / 255
+local ClickDarkDegree = -20        / 255
+
+--Locals
+local Default = script.Parent.BackgroundColor3 
+local Tween = game:GetService("TweenService")
+local Entered
+local NewColor
+
+--Mouse Enter
+Button.MouseEnter:Connect(function()
+	Entered = true
+	Tween:Create(Button,TweenInfo.new(TweenTime,Style,Enum.EasingDirection.Out),{
+
+		BackgroundColor3 = Color3.new(Default.R-EnterDarkDegree,Default.G-EnterDarkDegree,Default.B-EnterDarkDegree),
+	}):Play()
+	if Logs then
+		print('Enter '..tostring(Color3.fromRGB(Default.R-EnterDarkDegree,Default.G-EnterDarkDegree,Default.B-EnterDarkDegree)))
+	end
+end)
+
+Button.MouseLeave:Connect(function()
+	Entered = false
+
+	Tween:Create(Button,TweenInfo.new(TweenTime/1.2,Style,Enum.EasingDirection.In),{
+
+		BackgroundColor3 = Default,
+
+	}):Play()
+end)
+
+Button.MouseButton1Down:Connect(function()
+	Tween:Create(Button,TweenInfo.new(TweenTime/1.8,Style,Enum.EasingDirection.Out),{
+
+		BackgroundColor3 = Color3.new(Default.R-ClickDarkDegree,Default.G-ClickDarkDegree,Default.B-ClickDarkDegree),
+	}):Play()
+	if Logs then
+		print('MouseButton1Up '..tostring(Color3.fromRGB(Default.R-ClickDarkDegree,Default.G-ClickDarkDegree,Default.B-ClickDarkDegree)))
+	end
+end)
+
+Button.MouseButton1Up:Connect(function()
+	if Entered == false then
+		NewColor = Default
+	elseif Entered == true then
+		NewColor = Color3.new(Default.R-EnterDarkDegree,Default.G-EnterDarkDegree,Default.B-EnterDarkDegree)
+	end
+	Tween:Create(Button,TweenInfo.new(TweenTime/1.2,Style,Enum.EasingDirection.In),{
+
+		BackgroundColor3 = NewColor,
+
+	}):Play()
+end)
+
+if Logs then
+	print("UI BUTTON EFFECT LOADED!")
+end
+
 
 UICorner.CornerRadius = UDim.new(0, 3)
 UICorner.Parent = TextButton
@@ -154,3 +220,26 @@ local function JMOH_fake_script() -- Frame.Smooth GUI Dragging
 	runService.Heartbeat:Connect(Update)
 end
 coroutine.wrap(JMOH_fake_script)()
+
+local function teleportToArtifact()
+    local player = game.Players.LocalPlayer
+    local artifacts = game.Workspace:FindPartsInRegion3(game.Workspace.MouseIgnore.CFrame, Vector3.new(50, 50, 50), nil)
+
+    for _, part in pairs(artifacts) do
+        if part.Parent and part.Parent:IsA("Model") and string.sub(part.Parent.Name, 1, 8) == "Artifact" then
+            local plasticPart = part.Parent:FindFirstChild("plastic")
+            
+            if plasticPart and player.Character then
+                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                
+                if humanoidRootPart then
+                    -- Teleport the player to the plastic part inside the artifact
+                    humanoidRootPart.CFrame = CFrame.new(plasticPart.Position + Vector3.new(0, 3, 0))
+                end
+            end
+        end
+    end
+end
+
+-- Connect the teleport function to the "Find Next" button click event
+TextButton.MouseButton1Click:Connect(teleportToArtifact)
