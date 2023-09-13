@@ -58,79 +58,6 @@ local Logs = false
 local ScaleTextSize = 7
 local TweenTime = 0.24
 local Style = Enum.EasingStyle.Quad
-local EnterDarkDegree = -10 / 255
-local ClickDarkDegree = -20 / 255
-
---Locals
-local Default = script.Parent.BackgroundColor3
-local Tween = game:GetService("TweenService")
-local Entered
-local NewColor
-
---Mouse Enter
-Button.MouseEnter:Connect(function()
-    Entered = true
-    Tween:Create(Button, TweenInfo.new(TweenTime, Style, Enum.EasingDirection.Out), {
-        BackgroundColor3 = Color3.new(Default.R - EnterDarkDegree, Default.G - EnterDarkDegree, Default.B - EnterDarkDegree),
-    }):Play()
-    if Logs then
-        print('Enter ' .. tostring(Color3.fromRGB(Default.R - EnterDarkDegree, Default.G - EnterDarkDegree, Default.B - EnterDarkDegree)))
-    end
-end)
-
-Button.MouseLeave:Connect(function()
-    Entered = false
-
-    Tween:Create(Button, TweenInfo.new(TweenTime / 1.2, Style, Enum.EasingDirection.In), {
-        BackgroundColor3 = Default,
-    }):Play()
-end)
-
-Button.MouseButton1Down:Connect(function()
-    Tween:Create(Button, TweenInfo.new(TweenTime / 1.8, Style, Enum.EasingDirection.Out), {
-        BackgroundColor3 = Color3.new(Default.R - ClickDarkDegree, Default.G - ClickDarkDegree, Default.B - ClickDarkDegree),
-    }):Play()
-    if Logs then
-        print('MouseButton1Up ' .. tostring(Color3.fromRGB(Default.R - ClickDarkDegree, Default.G - ClickDarkDegree, Default.B - ClickDarkDegree)))
-    end
-end)
-
-Button.MouseButton1Up:Connect(function()
-    if Entered == false then
-        NewColor = Default
-    elseif Entered == true then
-        NewColor = Color3.new(Default.R - EnterDarkDegree, Default.G - EnterDarkDegree, Default.B - EnterDarkDegree)
-    end
-    Tween:Create(Button, TweenInfo.new(TweenTime / 1.2, Style, Enum.EasingDirection.In), {
-        BackgroundColor3 = NewColor,
-    }):Play()
-end)
-
-if Logs then
-    print("UI BUTTON EFFECT LOADED!")
-end
-
-UICorner.CornerRadius = UDim.new(0, 3)
-UICorner.Parent = TextButton
-
-UICorner2.CornerRadius = UDim.new(0, 3)
-UICorner2.Parent = Frame
-
-UIPadding.Parent = TextButton
-UIPadding.PaddingBottom = UDim.new(0, 5)
-UIPadding.PaddingLeft = UDim.new(0, 5)
-UIPadding.PaddingRight = UDim.new(0, 5)
-UIPadding.PaddingTop = UDim.new(0, 5)
-
--- Smooth GUI Dragging (you provided this part)
-local Button = TextButton
-Button.AutoButtonColor = false
-
---Values
-local Logs = false
-local ScaleTextSize = 7
-local TweenTime = 0.24
-local Style = Enum.EasingStyle.Quad
 local EnterDarkDegree = -10        / 255
 local ClickDarkDegree = -20        / 255
 
@@ -189,26 +116,102 @@ if Logs then
 	print("UI BUTTON EFFECT LOADED!")
 end
 
--- Function to teleport to an artifact
-local function teleportToArtifact()
-    local player = game.Players.LocalPlayer
-    local artifacts = game.Workspace:FindPartsInRegion3(game.Workspace.MouseIgnore.CFrame, Vector3.new(50, 50, 50), nil)
 
-    for _, part in pairs(artifacts) do
-        if part.Parent and part.Parent:IsA("Model") and string.sub(part.Parent.Name, 1, 8) == "Artifact" then
-            local plasticPart = part.Parent:FindFirstChild("plastic")
-            
-            if plasticPart and player.Character then
-                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
-                
-                if humanoidRootPart then
-                    -- Teleport the player to the plastic part inside the artifact
-                    humanoidRootPart.CFrame = CFrame.new(plasticPart.Position + Vector3.new(0, 3, 0))
-                end
-            end
-        end
-    end
+UICorner.CornerRadius = UDim.new(0, 3)
+UICorner.Parent = TextButton
+
+UICorner2.CornerRadius = UDim.new(0, 3)
+UICorner2.Parent = Frame
+
+UIPadding.Parent = TextButton
+UIPadding.PaddingBottom = UDim.new(0, 5)
+UIPadding.PaddingLeft = UDim.new(0, 5)
+UIPadding.PaddingRight = UDim.new(0, 5)
+UIPadding.PaddingTop = UDim.new(0, 5)
+
+-- Scripts:
+
+local function NFUQ_fake_script() -- TextButton.CLICK 
+	local script = Instance.new('LocalScript', TextButton)
+
+	local player = game.Players.LocalPlayer
+	    local artifacts = game.Workspace:FindPartsInRegion3(game.Workspace.MouseIgnore.CFrame, Vector3.new(50, 50, 50), nil)
+	
+	    for _, part in pairs(artifacts) do
+	        if part.Parent and part.Parent:IsA("Model") and string.sub(part.Parent.Name, 1, 8) == "Artifact" then
+	            local plasticPart = part.Parent:FindFirstChild("plastic")
+	            
+	            if plasticPart and player.Character then
+	                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+	                
+	                if humanoidRootPart then
+	                    -- Teleport the player to the plastic part inside the artifact
+	                    humanoidRootPart.CFrame = CFrame.new(plasticPart.Position + Vector3.new(0, 3, 0))
+	                end
+	            end
+	        end
+	    end
+end)
+
+end)
+	
 end
+coroutine.wrap(NFUQ_fake_script)()
+local function JMOH_fake_script() -- Frame.Smooth GUI Dragging 
+	local script = Instance.new('LocalScript', Frame)
 
--- Connect the teleport function to the "Find Next" button click event
-TextButton.MouseButton1Click:Connect(teleportToArtifact)
+	local UserInputService = game:GetService("UserInputService")
+	local runService = (game:GetService("RunService"));
+	
+	local gui = script.Parent
+	
+	local dragging
+	local dragInput
+	local dragStart
+	local startPos
+	
+	function Lerp(a, b, m)
+		return a + (b - a) * m
+	end;
+	
+	local lastMousePos
+	local lastGoalPos
+	local DRAG_SPEED = (20); -- // The speed of the UI darg.
+	function Update(dt)
+		if not (startPos) then return end;
+		if not (dragging) and (lastGoalPos) then
+			gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, lastGoalPos.X.Offset, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, lastGoalPos.Y.Offset, dt * DRAG_SPEED))
+			return 
+		end;
+	
+		local delta = (lastMousePos - UserInputService:GetMouseLocation())
+		local xGoal = (startPos.X.Offset - delta.X);
+		local yGoal = (startPos.Y.Offset - delta.Y);
+		lastGoalPos = UDim2.new(startPos.X.Scale, xGoal, startPos.Y.Scale, yGoal)
+		gui.Position = UDim2.new(startPos.X.Scale, Lerp(gui.Position.X.Offset, xGoal, dt * DRAG_SPEED), startPos.Y.Scale, Lerp(gui.Position.Y.Offset, yGoal, dt * DRAG_SPEED))
+	end;
+	
+	gui.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = gui.Position
+			lastMousePos = UserInputService:GetMouseLocation()
+	
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+	
+	gui.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+	
+	runService.Heartbeat:Connect(Update)
+end
+coroutine.wrap(JMOH_fake_script)()
