@@ -67,19 +67,27 @@ local function NFUQ_fake_script() -- TextButton.CLICK
 	local player = game.Players.LocalPlayer
 
 script.Parent.MouseButton1Click:Connect(function()
+    local player = game.Players.LocalPlayer
+
+script.Parent.MouseButton1Click:Connect(function()
     local artifacts = game.Workspace:FindPartsInRegion3(game.Workspace.MouseIgnore.CFrame, Vector3.new(50, 50, 50), nil)
 
     for _, part in pairs(artifacts) do
         if part.Parent and part.Parent:IsA("Model") and string.sub(part.Parent.Name, 1, 8) == "Artifact" then
             local plasticPart = part.Parent:FindFirstChild("plastic")
             
-            if plasticPart then
-                -- Teleport the player to the plastic part inside the artifact
-                local teleportPosition = plasticPart.Position
-                player.Character:MoveTo(teleportPosition)
+            if plasticPart and player.Character then
+                local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                
+                if humanoidRootPart then
+                    -- Teleport the player to the plastic part inside the artifact
+                    humanoidRootPart.CFrame = CFrame.new(plasticPart.Position + Vector3.new(0, 3, 0))
+                end
             end
         end
     end
+end)
+
 end)
 	
 end
