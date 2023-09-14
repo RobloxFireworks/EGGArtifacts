@@ -2,6 +2,7 @@ local Main = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local TextLabel = Instance.new("TextLabel")
 local TextLabel2 = Instance.new("TextLabel")
+local TextLabel3 = Instance.new("TextLabel")
 local TextButton = Instance.new("TextButton")
 local UICorner = Instance.new("UICorner")
 local UICorner2 = Instance.new("UICorner")
@@ -33,7 +34,7 @@ TextLabel.Position = UDim2.new(0.5, 0, 0.100000001, 0)
 TextLabel.Size = UDim2.new(0.600000024, 0, 0.150000006, 0)
 TextLabel.Font = Enum.Font.GothamBold
 TextLabel.Text = "EGG Artifact Finder"
-TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextColor3 = Color3.fromRGB(232, 230, 227)
 TextLabel.TextScaled = true
 TextLabel.TextSize = 14.000
 TextLabel.TextWrapped = true
@@ -44,7 +45,7 @@ TextLabel2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 TextLabel2.BackgroundTransparency = 1.000
 TextLabel2.BorderColor3 = Color3.fromRGB(0, 0, 0)
 TextLabel2.BorderSizePixel = 0
-TextLabel2.Position = UDim2.new(0.5, 0, 0.2, 0)
+TextLabel2.Position = UDim2.new(0.5, 0, 0.27, 0)
 TextLabel2.Size = UDim2.new(0.600000024, 0, 0.150000006, 0)
 TextLabel2.Font = Enum.Font.GothamBold
 TextLabel2.Text = "0 Artifact(s) Found."
@@ -53,19 +54,36 @@ TextLabel2.TextScaled = true
 TextLabel2.TextSize = 14.000
 TextLabel2.TextWrapped = true
 
+TextLabel3.Parent = Frame
+TextLabel3.AnchorPoint = Vector2.new(0.5, 0.5)
+TextLabel3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel3.BackgroundTransparency = 1.000
+TextLabel3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel3.BorderSizePixel = 0
+TextLabel3.Position = UDim2.new(0.5, 0, 1.1, 0)
+TextLabel3.Size = UDim2.new(0.95, 0, 0.2, 0)
+TextLabel3.Font = Enum.Font.GothamBold
+TextLabel3.Text = "Hello, this is where the debug stuff goes."
+TextLabel3.TextColor3 = Color3.fromRGB(232, 230, 227)
+TextLabel3.TextScaled = true
+TextLabel3.TextSize = 14.000
+TextLabel3.TextWrapped = true
+
 TextButton.Parent = Frame
 TextButton.AnchorPoint = Vector2.new(0.5, 0.5)
 TextButton.BackgroundColor3 = Color3.fromRGB(42, 42, 42)
 TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 TextButton.BorderSizePixel = 0
-TextButton.Position = UDim2.new(0.5, 0, 0.600000024, 0)
+TextButton.Position = UDim2.new(0.5, 0, 0.65, 0)
 TextButton.Size = UDim2.new(0.800000012, 0, 0.5, 0)
 TextButton.Font = Enum.Font.GothamBold
-TextButton.Text = "Find Next"
-TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.Text = "Goto Next"
+TextButton.TextColor3 = Color3.fromRGB(232, 230, 227)
 TextButton.TextScaled = true
 TextButton.TextSize = 14.000
 TextButton.TextWrapped = true
+local lastTeleportPosition = nil
+
 TextButton.MouseButton1Click:Connect(function()
     -- Find the Player and Workspace
     local player = game.Players.LocalPlayer
@@ -78,6 +96,13 @@ TextButton.MouseButton1Click:Connect(function()
 
         if not humanoidRootPart then
             return
+        end
+
+        -- Check if the destination is the same as the last teleport
+        if lastTeleportPosition and part.Position == lastTeleportPosition then
+            print("Skipping the same artifact.")
+            TextLabel3.Text = "[DEBUG]: Skipping the same artifact."
+            return false -- Indicate that the teleport was skipped
         end
 
         -- Disable character parts from colliding
@@ -102,6 +127,11 @@ TextButton.MouseButton1Click:Connect(function()
                 part.CanCollide = true
             end
         end
+
+        -- Update the lastTeleportPosition
+        lastTeleportPosition = part.Position
+
+        return true -- Indicate that the teleport was successful
     end
 
     -- Function to search for and teleport to "plastic" parts within models
@@ -110,8 +140,11 @@ TextButton.MouseButton1Click:Connect(function()
             if child:IsA("Model") and string.find(child.Name, "Artifact") then
                 local plasticPart = child:FindFirstChild("Plastic")
                 if plasticPart and plasticPart:IsA("BasePart") then
-	                teleportToPartWithAnimation(plasticPart)
-	                return true
+                    if teleportToPartWithAnimation(plasticPart) then
+                        return true -- Teleport was successful
+                    else
+                        -- Teleport was skipped, continue searching for the next artifact
+                    end
                 end
             end
         end
@@ -124,9 +157,11 @@ TextButton.MouseButton1Click:Connect(function()
     if mouseIgnore then
         if not searchForPlasticParts(mouseIgnore) then
             print("No artifact found.")
+            TextLabel3.Text = "[DEBUG]: No artifact found."
         end
     else
         print("The 'MouseIgnore' folder was not found in Workspace.")
+        TextLabel3.Text = "[DEBUG]: The 'MouseIgnore' folder was not found in Workspace."
     end
 end)
 
@@ -134,7 +169,7 @@ end)
 local Button = TextButton
 Button.AutoButtonColor = false
 
---Values
+-- Values
 local Logs = false
 local ScaleTextSize = 7
 local TweenTime = 0.24
@@ -142,28 +177,29 @@ local Style = Enum.EasingStyle.Quad
 local EnterDarkDegree = -10 / 255
 local ClickDarkDegree = -20 / 255
 
---Locals
-local Default = TextButton.BackgroundColor3 
+-- Locals
+local Default = TextButton.BackgroundColor3
 local Tween = game:GetService("TweenService")
 local Entered
 local NewColor
 
---Mouse Enter
+-- Mouse Enter
 Button.MouseEnter:Connect(function()
     Entered = true
-    Tween:Create(Button,TweenInfo.new(TweenTime,Style,Enum.EasingDirection.Out),{
+    Tween:Create(Button, TweenInfo.new(TweenTime, Style, Enum.EasingDirection.Out), {
 
-        BackgroundColor3 = Color3.new(Default.R-EnterDarkDegree,Default.G-EnterDarkDegree,Default.B-EnterDarkDegree),
+        BackgroundColor3 = Color3.new(Default.R - EnterDarkDegree, Default.G - EnterDarkDegree, Default.B - EnterDarkDegree),
     }):Play()
     if Logs then
-        print('Enter '..tostring(Color3.fromRGB(Default.R-EnterDarkDegree,Default.G-EnterDarkDegree,Default.B-EnterDarkDegree)))
+        print("Enter " .. tostring(Color3.fromRGB(Default.R - EnterDarkDegree, Default.G - EnterDarkDegree, Default.B - EnterDarkDegree)))
+        TextLabel3.Text = "[DEBUG]: Enter " .. tostring(Color3.fromRGB(Default.R - EnterDarkDegree, Default.G - EnterDarkDegree, Default.B - EnterDarkDegree))
     end
 end)
 
 Button.MouseLeave:Connect(function()
     Entered = false
 
-    Tween:Create(Button,TweenInfo.new(TweenTime/1.2,Style,Enum.EasingDirection.In),{
+    Tween:Create(Button, TweenInfo.new(TweenTime / 1.2, Style, Enum.EasingDirection.In), {
 
         BackgroundColor3 = Default,
 
@@ -171,12 +207,13 @@ Button.MouseLeave:Connect(function()
 end)
 
 Button.MouseButton1Down:Connect(function()
-    Tween:Create(Button,TweenInfo.new(TweenTime/1.8,Style,Enum.EasingDirection.Out),{
+    Tween:Create(Button, TweenInfo.new(TweenTime / 1.8, Style, Enum.EasingDirection.Out), {
 
-        BackgroundColor3 = Color3.new(Default.R-ClickDarkDegree,Default.G-ClickDarkDegree,Default.B-ClickDarkDegree),
+        BackgroundColor3 = Color3.new(Default.R - ClickDarkDegree, Default.G - ClickDarkDegree, Default.B - ClickDarkDegree),
     }):Play()
     if Logs then
-        print('MouseButton1Up '..tostring(Color3.fromRGB(Default.R-ClickDarkDegree,Default.G-ClickDarkDegree,Default.B-ClickDarkDegree)))
+        print("MouseButton1Up " .. tostring(Color3.fromRGB(Default.R - ClickDarkDegree, Default.G - ClickDarkDegree, Default.B - ClickDarkDegree)))
+        TextLabel3.Text = "[DEBUG]: MouseButton1Up " .. tostring(Color3.fromRGB(Default.R - ClickDarkDegree, Default.G - ClickDarkDegree, Default.B - ClickDarkDegree))
     end
 end)
 
@@ -184,9 +221,9 @@ Button.MouseButton1Up:Connect(function()
     if Entered == false then
         NewColor = Default
     elseif Entered == true then
-        NewColor = Color3.new(Default.R-EnterDarkDegree,Default.G-EnterDarkDegree,Default.B-EnterDarkDegree)
+        NewColor = Color3.new(Default.R - EnterDarkDegree, Default.G - EnterDarkDegree, Default.B - EnterDarkDegree)
     end
-    Tween:Create(Button,TweenInfo.new(TweenTime/1.2,Style,Enum.EasingDirection.In),{
+    Tween:Create(Button, TweenInfo.new(TweenTime / 1.2, Style, Enum.EasingDirection.In), {
 
         BackgroundColor3 = NewColor,
 
@@ -195,6 +232,7 @@ end)
 
 if Logs then
     print("UI BUTTON EFFECT LOADED!")
+    TextLabel3.Text = "[DEBUG]: UI BUTTON EFFECT LOADED!"
 end
 
 
@@ -264,3 +302,49 @@ gui.InputChanged:Connect(function(input)
 end)
 
 runService.Heartbeat:Connect(Update)
+
+local artifactCount = 0  -- Initialize artifact count to 0
+-- Function to update TextLabel2 with artifact count and color
+local function updateArtifactCount()
+    TextLabel2.Text = artifactCount .. " Artifact(s) Found."
+
+    if artifactCount == 0 then
+        TextLabel2.TextColor3 = Color3.new(170, 0, 0)  -- Red when artifact count is 0
+    else
+        TextLabel2.TextColor3 = Color3.new(0, 170, 0)  -- Green when artifact count is not 0
+    end
+end
+local mouseIgnore = workspace:FindFirstChild("MouseIgnore")
+if mouseIgnore then
+    -- Function to update the artifact count
+    local function updateArtifactCount()
+        local newCount = 0
+
+        for _, artifactAmount in pairs(mouseIgnore:GetChildren()) do
+            if string.sub(artifactAmount.Name, 1, 8) == "Artifact" then
+                newCount = newCount + 1
+            end
+        end
+
+        if newCount ~= artifactCount then
+            artifactCount = newCount
+            print("Number of models starting with 'Artifact': " .. artifactCount)
+            TextLabel3.Text = "[DEBUG]: Number of models starting with 'Artifact': " .. artifactCount
+            TextLabel2.Text = artifactCount .. " Artifact(s) Found."
+            if artifactCount == 0 then
+                TextLabel2.TextColor3 = Color3.new(170, 0, 0)  -- Red when artifact count is 0
+            else
+                TextLabel2.TextColor3 = Color3.new(0, 170, 0)  -- Green when artifact count is not 0
+            end
+        end
+    end
+
+    -- Run the update function periodically
+    while true do
+        updateArtifactCount()
+        wait(1)  -- Adjust the interval as needed (1 second in this example)
+    end
+else
+    print("The 'MouseIgnore' folder was not found in Workspace.")
+    TextLabel3.Text = "[DEBUG]: The 'MouseIgnore' folder was not found in Workspace."
+end
