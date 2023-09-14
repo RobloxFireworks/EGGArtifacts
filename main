@@ -165,6 +165,13 @@ TextButton.MouseButton1Click:Connect(function()
         print("The 'MouseIgnore' folder was not found in Workspace.")
         TextLabel3.Text = "[DEBUG]: The 'MouseIgnore' folder was not found in Workspace."
         TextLabel3.TextColor3 = Color3.fromRGB(255, 165, 0)
+        print("Retrying. Please wait.")
+        TextLabel3.Text = "[DEBUG]: Retrying. Please wait."
+        local mouseIgnore = workspace:FindFirstChild("MouseIgnore")
+        if mouseIgnore then
+            print("MouseIgnore found!")
+            TextLabel3.Text = "[DEBUG]: MouseIgnore found!"
+        end)
     end
 end)
 
