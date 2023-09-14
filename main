@@ -102,6 +102,7 @@ TextButton.MouseButton1Click:Connect(function()
         if lastTeleportPosition and part.Position == lastTeleportPosition then
             print("Skipping the same artifact.")
             TextLabel3.Text = "[DEBUG]: Skipping the same artifact."
+            TextLabel3.TextColor3 = Color3.fromRGB(232, 230, 227)
             return false -- Indicate that the teleport was skipped
         end
 
@@ -156,12 +157,14 @@ TextButton.MouseButton1Click:Connect(function()
 
     if mouseIgnore then
         if not searchForPlasticParts(mouseIgnore) then
-            print("No artifact found.")
-            TextLabel3.Text = "[DEBUG]: No artifact found."
+            print("No new artifacts found.")
+            TextLabel3.Text = "[DEBUG]: No new artifacts found."
+            TextLabel3.TextColor3 = Color3.fromRGB(232, 230, 227)
         end
     else
         print("The 'MouseIgnore' folder was not found in Workspace.")
         TextLabel3.Text = "[DEBUG]: The 'MouseIgnore' folder was not found in Workspace."
+        TextLabel3.TextColor3 = Color3.fromRGB(255, 165, 0)
     end
 end)
 
@@ -193,6 +196,7 @@ Button.MouseEnter:Connect(function()
     if Logs then
         print("Enter " .. tostring(Color3.fromRGB(Default.R - EnterDarkDegree, Default.G - EnterDarkDegree, Default.B - EnterDarkDegree)))
         TextLabel3.Text = "[DEBUG]: Enter " .. tostring(Color3.fromRGB(Default.R - EnterDarkDegree, Default.G - EnterDarkDegree, Default.B - EnterDarkDegree))
+        TextLabel3.TextColor3 = Color3.fromRGB(255, 165, 0)
     end
 end)
 
@@ -214,6 +218,7 @@ Button.MouseButton1Down:Connect(function()
     if Logs then
         print("MouseButton1Up " .. tostring(Color3.fromRGB(Default.R - ClickDarkDegree, Default.G - ClickDarkDegree, Default.B - ClickDarkDegree)))
         TextLabel3.Text = "[DEBUG]: MouseButton1Up " .. tostring(Color3.fromRGB(Default.R - ClickDarkDegree, Default.G - ClickDarkDegree, Default.B - ClickDarkDegree))
+        TextLabel3.TextColor3 = Color3.fromRGB(255, 165, 0)
     end
 end)
 
@@ -233,6 +238,7 @@ end)
 if Logs then
     print("UI BUTTON EFFECT LOADED!")
     TextLabel3.Text = "[DEBUG]: UI BUTTON EFFECT LOADED!"
+    TextLabel3.TextColor3 = Color3.fromRGB(232, 230, 227)
 end
 
 
@@ -330,6 +336,7 @@ if mouseIgnore then
             artifactCount = newCount
             print("Number of models starting with 'Artifact': " .. artifactCount)
             TextLabel3.Text = "[DEBUG]: Number of models starting with 'Artifact': " .. artifactCount
+            TextLabel3.TextColor3 = Color3.fromRGB(232, 230, 227)
             TextLabel2.Text = artifactCount .. " Artifact(s) Found."
             if artifactCount == 0 then
                 TextLabel2.TextColor3 = Color3.new(170, 0, 0)  -- Red when artifact count is 0
@@ -347,4 +354,5 @@ if mouseIgnore then
 else
     print("The 'MouseIgnore' folder was not found in Workspace.")
     TextLabel3.Text = "[DEBUG]: The 'MouseIgnore' folder was not found in Workspace."
+    TextLabel3.TextColor3 = Color3.fromRGB(255, 165, 0)
 end
