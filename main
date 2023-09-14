@@ -173,10 +173,8 @@ TextButton.MouseButton1Click:Connect(function()
         if mouseIgnore then
             print("MouseIgnore found!")
             TextLabel3.Text = "[DEBUG]: MouseIgnore found!"
-            -- Now, you can proceed with whatever you need to do with the folder.
         end
     end
-
 end)
 
 
