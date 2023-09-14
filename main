@@ -154,7 +154,7 @@ TextButton.MouseButton1Click:Connect(function()
 
     -- Find the "MouseIgnore" folder in Workspace
     local mouseIgnore = workspace:FindFirstChild("MouseIgnore")
-
+    
     if mouseIgnore then
         if not searchForPlasticParts(mouseIgnore) then
             print("No new artifacts found.")
@@ -168,12 +168,15 @@ TextButton.MouseButton1Click:Connect(function()
         print("Retrying. Please wait.")
         TextLabel3.Text = "[DEBUG]: Retrying. Please wait."
         wait(3)
-        local mouseIgnore = workspace:FindFirstChild("MouseIgnore")
+        -- Re-check for the "MouseIgnore" folder
+        mouseIgnore = workspace:FindFirstChild("MouseIgnore")
         if mouseIgnore then
             print("MouseIgnore found!")
             TextLabel3.Text = "[DEBUG]: MouseIgnore found!"
+            -- Now, you can proceed with whatever you need to do with the folder.
         end
     end
+
 end)
 
 
