@@ -13,6 +13,7 @@ local UIPadding = Instance.new("UIPadding")
 Main.Name = "Main"
 Main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 Main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+Main.ResetOnSpawn = false
 Main.DisplayOrder = 999999999
 
 Frame.Parent = Main
