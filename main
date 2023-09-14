@@ -52,43 +52,68 @@ TextButton.TextSize = 14.000
 TextButton.TextWrapped = true
 TextButton.MouseButton1Click:Connect(function()
     -- Find the Player and Workspace
-	local player = game.Players.LocalPlayer
-	local workspace = game.Workspace
-	
-	-- Function to teleport player to a specific part
-	local function teleportToPart(part)
-	    local character = player.Character
-	    if character and character:FindFirstChild("HumanoidRootPart") then
-	        local humanoidRootPart = character.HumanoidRootPart
-	        humanoidRootPart.CFrame = part.CFrame
-	    end
-	end
-	
-	-- Function to search for and teleport to "plastic" parts within models
-	local function searchForPlasticParts(parent)
-	    for _, child in pairs(parent:GetChildren()) do
-	        if child:IsA("Model") and string.find(child.Name, "Artifact") then
-	            local plasticPart = child:FindFirstChild("Plastic")
-	            if plasticPart and plasticPart:IsA("BasePart") then
-	                teleportToPart(plasticPart)
-	                return true  -- Stop searching after the first one is found
-	            end
-	        end
-	    end
-	    return false
-	end
-	
-	-- Find the "MouseIgnore" folder in Workspace
-	local mouseIgnore = workspace:FindFirstChild("MouseIgnore")
-	
-	if mouseIgnore then
-	    if not searchForPlasticParts(mouseIgnore) then
-	        print("No 'plastic' part found inside 'Artifact' models.")
-	    end
-	else
-	    print("The 'MouseIgnore' folder was not found in Workspace.")
-	end
+    local player = game.Players.LocalPlayer
+    local workspace = game.Workspace
+
+    -- Function to teleport player to a specific part with animation
+    local function teleportToPartWithAnimation(part)
+        local character = player.Character
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+
+        if not humanoidRootPart then
+            return
+        end
+
+        -- Disable character parts from colliding
+        for _, part in pairs(character:GetChildren()) do
+            if part:IsA("BasePart") and not part:IsA("Part") then
+                part.CanCollide = false
+            end
+        end
+
+        local targetPosition = part.Position + Vector3.new(0, 8, 0) -- 8 studs above the artifact
+        local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear)
+
+        local tween = game.TweenService:Create(humanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition)})
+        tween:Play()
+
+        -- Wait for the tween to finish
+        tween.Completed:Wait(1)
+
+        -- Enable character parts to collide again
+        for _, part in pairs(character:GetChildren()) do
+            if part:IsA("BasePart") and not part:IsA("Part") then
+                part.CanCollide = true
+            end
+        end
+    end
+
+    -- Function to search for and teleport to "plastic" parts within models
+    local function searchForPlasticParts(parent)
+        for _, child in pairs(parent:GetChildren()) do
+            if child:IsA("Model") and string.find(child.Name, "Artifact") then
+                local plasticPart = child:FindFirstChild("Plastic")
+                if plasticPart and plasticPart:IsA("BasePart") then
+	                teleportToPartWithAnimation(plasticPart)
+	                return true
+                end
+            end
+        end
+        return false
+    end
+
+    -- Find the "MouseIgnore" folder in Workspace
+    local mouseIgnore = workspace:FindFirstChild("MouseIgnore")
+
+    if mouseIgnore then
+        if not searchForPlasticParts(mouseIgnore) then
+            print("No artifact found.")
+        end
+    else
+        print("The 'MouseIgnore' folder was not found in Workspace.")
+    end
 end)
+
 
 local Button = TextButton
 Button.AutoButtonColor = false
